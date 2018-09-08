@@ -45,7 +45,7 @@ The table below summarizes results as produced and presented in [mnist.ipynb](mn
 | Tree (distill) | 4     | soft   | 4          | 40     | 90.71%   |
 
 ## Interpretability
-Just a quick taste of what's inside. Detailed instructions of how to interprete these visualizations are in the [mnist.ipynb](mnist.ipynb) notebook.
+Just a quick taste of what's inside. Detailed instructions for how to read these visualizations are in the [mnist.ipynb](mnist.ipynb) notebook.
 
 ### Inference
 
