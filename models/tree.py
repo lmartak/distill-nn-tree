@@ -16,12 +16,8 @@ class TrainableVar(Layer):
         super(TrainableVar, self).__init__()
         self.kernel = self.add_variable(name=name, shape=shape, **kwargs)
 
-    def build(self, input_shape):
-        pass
-
     def call(self, input):
         return self.kernel
-
 
 class LeftBranch(Layer):
     def call(self, input):
