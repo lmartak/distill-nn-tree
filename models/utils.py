@@ -15,7 +15,7 @@ def brand_new_tfsession(sess=None):
 
     return sess
 
-def draw_tree(sess, tree, img_rows, img_cols,
+def draw_tree(sess, tree, img_rows, img_cols, img_chans,
               input_img=None, show_correlation=False, savepath=''):
 
     import itertools
@@ -34,7 +34,7 @@ def draw_tree(sess, tree, img_rows, img_cols,
     # collect model parameters for plotting
     kernels = dict([(l.name.split('_')[-1],
                      np.squeeze(l.get_weights()[0]).reshape(
-                         (img_rows, img_cols)))
+                         (img_rows, img_cols, img_chans)))
                     for l in tree.model.layers if 'dense' in l.name])
     biases = dict([(l.name.split('_')[-1], np.squeeze(l.get_weights()[1][0]))
                    for l in tree.model.layers if 'dense' in l.name])
@@ -71,7 +71,7 @@ def draw_tree(sess, tree, img_rows, img_cols,
                     ha='center', va='center')
             if show_correlation:
                 kernel_image = input_img * kernels[key]
-        ax.imshow(kernel_image, **imshow_args)
+        ax.imshow(kernel_image.squeeze(), **imshow_args)
         ax.axis('off')
         digits = set([np.argmax(leaves[k]) for k in leaves.keys()
                       if k.startswith(key)])
@@ -104,7 +104,7 @@ def draw_tree(sess, tree, img_rows, img_cols,
     # draw input image with arrow indicating flow into the root node
     if input_img is not None:
         ax = plt.subplot(gs[0, 0:4])
-        ax.imshow(input_img, clim=(0.0, 1.0), **imshow_args)
+        ax.imshow(input_img.squeeze(), clim=(0.0, 1.0), **imshow_args)
         ax.axis('off')
         plt.title('input')
         _add_arrow(ax, axes['0'],

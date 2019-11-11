@@ -1,18 +1,19 @@
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.layers import (Input, Reshape, Conv2D, MaxPooling2D,
+from tensorflow.keras.layers import (Input, Permute, Conv2D, MaxPooling2D,
                                      Dropout, Flatten, Dense)
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.optimizers import Adam
 
 
 class ConvNet(object):
-    def __init__(self, img_rows, img_cols, n_classes, optimizer=Adam,
-                 loss='categorical_crossentropy',
+    def __init__(self, img_rows, img_cols, img_chans, n_classes,
+                 optimizer=Adam, loss='categorical_crossentropy',
                  metrics=['acc'], learning_rate=3e-04):
         self.img_rows = img_rows
         self.img_cols = img_cols
+        self.img_chans = img_chans
         self.n_classes = n_classes
 
         self.optimizer = Adam(lr=learning_rate)
@@ -22,13 +23,13 @@ class ConvNet(object):
         self.model = None
 
     def build_model(self):
-        input_layer = Input(shape=(self.img_rows, self.img_cols))
+        input_layer = Input(shape=(self.img_rows, self.img_cols, self.img_chans))
 
-        # add channel dimension (required by conv layers)
-        if tf.keras.backend.image_data_format() == 'channels_last':
-            latent = Reshape((self.img_rows, self.img_cols, 1))(input_layer)
+        # handle image dimensions ordering
+        if tf.keras.backend.image_data_format() == 'channels_first':
+            latent = Permute((3, 1, 2))(input_layer)
         else:
-            latent = Reshape((1, self.img_rows, self.img_cols))(input_layer)
+            latent = input_layer
 
         # define the network architecture
         latent = Conv2D(filters=32, kernel_size=(3, 3),
